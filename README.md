@@ -1,2 +1,2 @@
-# minissan.github.io
-Nissan's Personal Site
+# didarul59.github.io
+Didar's Personal Site
