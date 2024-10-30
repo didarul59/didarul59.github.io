@@ -574,12 +574,12 @@ main {
 
 .photo-box img {
     width: 100%;
-    height: 85%; /* Leave space for the caption */
+    height: 80%; /* Leave space for the caption */
     object-fit: cover;
 }
 
 .photo-box figcaption {
-    height: 15%; /* Adjust to fit below the image */
+    height: 20%; /* Adjust to fit below the image */
     width: 100%;
     text-align: center;
     color: white; /* Set caption color to white */
