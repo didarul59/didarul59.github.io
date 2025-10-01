@@ -36,11 +36,79 @@
           <h1 class="name" title="Md.Didarul Islam">Md.Didarul Islam</h1>
           <p class="title" style="font-size:16px">Materialistics</p>
         </div>
+
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+      </div>
+
+      <div class="sidebar-info_more">
+        <div class="separator"></div>
+
+        <ul class="contacts-list">
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+              <a href="mailto:didarul59@student.sust.edu" class="contact-link">didarul59@student.sust.edu</a>
+            </div>
+          </li>
+
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+              <address>Sylhet, Bangladesh</address>
+            </div>
+          </li>
+        </ul>
+
+        <div class="separator"></div>
+
+        <ul class="social-list">
+          <li class="social-item">
+            <a href="https://www.facebook.com/mddidar.islam.925/" target="_blank" class="social-link">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://github.com/didarul59" target="_blank" class="social-link">
+              <ion-icon name="logo-github"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://www.researchgate.net/profile/Md-Didarul-Islam-5" target="_blank" class="social-link">
+              <i class="ai ai-google-scholar"></i>
+            </a>
+          </li>
+        </ul>
       </div>
     </aside>
 
     <!-- Main Content -->
     <div class="main-content">
+
+      <!-- Navigation Bar -->
+      <nav class="navbar">
+        <ul class="navbar-list">
+          <li class="navbar-item">
+            <button class="navbar-link active" data-nav-link>About</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Activities</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>CV</button>
+          </li>
+        </ul>
+      </nav>
 
       <!-- About Section -->
       <article class="about active" data-page="about">
@@ -62,21 +130,23 @@
           <p style="font-size:16px;">Python packages: Numpy, Pandas, Matplotlib, Seaborn</p>
           <p style="font-size:16px;">Machine Learning: Scikit-learn, Keras, TensorFlow</p>
         </section>
+      </article>
 
-        <!-- Activities Section -->
-        <section class="about-text">
+      <!-- Activities Section -->
+      <article class="activities" data-page="activities">
+        <header>
           <h3 class="h3 article-title">ACTIVITIES</h3>
-          <div class="photo-container">
-            <div class="photo-box">
-              <img src="./assets/images/didar1.jpeg" alt="Photo 1">
-              <figcaption>Oral Presentation At National Conference On Physics-2024, Khulna</figcaption>
-            </div>
-            <div class="photo-box">
-              <img src="./assets/images/didar2.jpeg" alt="Photo 2">
-              <figcaption>Poster Presentation At International Conference On Physics-2024, Dhaka</figcaption>
-            </div>
+        </header>
+        <div class="photo-container">
+          <div class="photo-box">
+            <img src="./assets/images/didar1.jpeg" alt="Photo 1">
+            <figcaption>Oral Presentation At National Conference On Physics-2024, Khulna</figcaption>
           </div>
-        </section>
+          <div class="photo-box">
+            <img src="./assets/images/didar2.jpeg" alt="Photo 2">
+            <figcaption>Poster Presentation At International Conference On Physics-2024, Dhaka</figcaption>
+          </div>
+        </div>
       </article>
 
       <!-- CV Section -->
@@ -84,7 +154,6 @@
         <header>
           <h2 class="h2 article-title">CV</h2>
         </header>
-
         <section class="cv">
           <div class="cv-container">
             <iframe src="Didarul_CV.pdf" class="cv-frame" title="CV" type="application/pdf"></iframe>
@@ -93,7 +162,6 @@
       </article>
 
     </div>
-
   </main>
 
   <!-- Custom JS -->
@@ -102,5 +170,4 @@
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
-
 </html>
