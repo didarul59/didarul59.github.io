@@ -294,6 +294,20 @@ article.active {
 
 
 
+/* CV circle link for sidebar social icons */
+.cv-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;       /* match other icons */
+  height: 36px;      /* match other icons */
+  border-radius: 50%;
+  background-color: #333; /* circle color, change if needed */
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-decoration: none;
+}
 
 
 /*-----------------------------------*\
