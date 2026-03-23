@@ -13,6 +13,7 @@
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/vlog-styles.css">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,7 +164,7 @@
         <section class="blog-posts">
           <ul class="blog-posts-list">
             <li class="blog-post-item">
-              <a href="#">
+              <a href="#mno-tutorial" data-nav-link="mno-tutorial">
                 <figure class="blog-banner-box">
                   <img src="./assets/images/blog-3.jpg" alt="MnO Wannier90 Tutorial" loading="lazy">
                 </figure>
@@ -175,12 +176,110 @@
                   </div>
                   <h3 class="h3 blog-item-title">Cracking the Code: MnO Wannier90 Workflow!</h3>
                   <p class="blog-text">
-                    In this vlog, I’m breaking down the complete workflow for MnO using Wannier90. We’re diving into everything from electron counting (26 valence electrons!) to the crucial relationship between nbnd and Wannier parameters. I’ve shared the exact steps that worked for me—perfect for anyone struggling with core state exclusions or energy windows. Stay tuned to see why MnO is the perfect 'symmetric' starting point before we tackle the beast that is FeO!
+                    In this vlog, I’m breaking down the complete workflow for MnO using Wannier90. We’re diving into everything from electron counting (26 valence electrons!) to the crucial relationship between nbnd and Wannier parameters. [Click to read more...]
                   </p>
                 </div>
               </a>
             </li>
           </ul>
+        </section>
+      </article>
+
+      <!-- Vlog Detail: MnO Tutorial -->
+      <article class="vlog-detail" data-page="mno-tutorial">
+        <header>
+          <div class="back-btn" data-nav-link="vlog">
+            <ion-icon name="chevron-back"></ion-icon>
+            <span>Back to Vlogs</span>
+          </div>
+          <h3 class="h3 article-title">MnO Wannier90 Tutorial: Complete Workflow Analysis</h3>
+        </header>
+
+        <section class="vlog-detail-article">
+          <p>This tutorial summarizes the successful Wannier90 calculation for <b>MnO (Manganese Oxide)</b>, an antiferromagnetic insulator with rock-salt structure. Both up and down spin channels ran successfully with identical input files, providing a reference for more complex materials like FeO.</p>
+
+          <h4>1. Introduction</h4>
+          <p>MnO is a classic example of a strongly correlated transition metal oxide. Using Wannier90, we can construct maximally localized Wannier functions (MLWFs) to analyze its electronic structure with high precision.</p>
+
+          <h4>2. Understanding nbnd Calculation</h4>
+          <div class="vlog-table-container">
+            <table class="vlog-table">
+              <thead>
+                <tr>
+                  <th>Atom</th>
+                  <th>Configuration</th>
+                  <th>Valence Electrons</th>
+                  <th>Count</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mn</td>
+                  <td>[Ar] 4s² 3d⁵</td>
+                  <td>7</td>
+                  <td>2</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td>O</td>
+                  <td>[He] 2s² 2p⁴</td>
+                  <td>6</td>
+                  <td>2</td>
+                  <td>12</td>
+                </tr>
+                <tr>
+                  <td colspan="4"><b>Total</b></td>
+                  <td><b>26</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="equation">
+            Total valence electrons = 26 <br>
+            For spin-polarized (nspin=2) → 26 bands needed for valence states.
+          </div>
+
+          <h4>3. NSCF Input Highlights</h4>
+          <span class="code-title">MnO_nscf.in snippet</span>
+          <div class="code-block">&amp;system
+    ibrav = 0,
+    celldm(1) = 7.88,
+    nat = 4,
+    ntyp = 3,
+    ecutwfc = 50.0,
+    nspin = 2,
+    nbnd = 36  ! 26 valence + 10 empty
+ /</div>
+
+          <h4>4. Projections &amp; Wannier Parameters</h4>
+          <p>We target 18 Wannier functions: 12 from Mn (s + d) and 6 from O (p).</p>
+          <div class="code-block">Begin Projections
+Mn:s;d           # 2 Mn × (1s + 5d) = 12
+O:p              # 2 O × 3p = 6
+End Projections
+
+num_wann  = 18
+num_bands = 26
+exclude_bands : 1-10</div>
+
+          <h4>5. Workflow Steps</h4>
+          <p>Follow these steps to complete the calculation:</p>
+          <div class="code-block"># Step 1: Run NSCF
+mpirun -np 4 pw.x -i MnO_nscf.in &gt; MnO_nscf.out
+
+# Step 2: Wannier90 Pre-processing
+wannier90.x -pp MnO_up
+
+# Step 3: Run pw2wannier90
+pw2wannier90.x &lt; pw2wan_MnO_up.in &gt; pw2wan_MnO_up.out
+
+# Step 4: Run Wannier90
+wannier90.x MnO_up</div>
+
+          <h4>Conclusion</h4>
+          <p>The identical behavior of up and down channels in MnO simplifies the workflow. For materials like FeO, you must account for asymmetry by checking the .eig files for each channel separately.</p>
         </section>
       </article>
 

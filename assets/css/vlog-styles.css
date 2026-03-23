@@ -1,0 +1,95 @@
+
+/* Vlog Detail Styles */
+
+.vlog-detail-article {
+    color: var(--light-gray);
+}
+
+.vlog-detail-article h4 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: var(--white-2);
+}
+
+.vlog-detail-article p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--orange-yellow-crayola);
+    font-size: var(--fs-6);
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.back-btn ion-icon {
+    font-size: 18px;
+}
+
+/* Table styles */
+.vlog-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--jet);
+}
+
+.vlog-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--eerie-black-1);
+    font-size: var(--fs-6);
+}
+
+.vlog-table th, .vlog-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--jet);
+}
+
+.vlog-table th {
+    background: var(--onyx);
+    color: var(--white-2);
+    font-weight: var(--fw-600);
+}
+
+.vlog-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Code styles */
+.code-block {
+    background: var(--smoky-black);
+    color: #d1d1d1;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: var(--fs-7);
+    line-height: 1.5;
+    margin-bottom: 25px;
+    overflow-x: auto;
+    border: 1px solid var(--jet);
+    white-space: pre;
+}
+
+.code-title {
+    font-size: var(--fs-8);
+    color: var(--light-gray-70);
+    margin-bottom: 5px;
+    display: block;
+    font-style: italic;
+}
+
+.equation {
+    text-align: center;
+    margin: 20px 0;
+    font-style: italic;
+    background: var(--onyx);
+    padding: 10px;
+    border-radius: 8px;
+}
