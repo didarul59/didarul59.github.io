@@ -144,10 +144,10 @@ const pages = document.querySelectorAll("[data-page]");
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
 
-    const clickedNav = this.innerHTML.toLowerCase().trim();
+    const clickedNav = this.dataset.navLink || this.innerHTML.toLowerCase().trim();
 
     for (let j = 0; j < pages.length; j++) {
-      if (clickedNav === pages[j].dataset.page.toLowerCase().trim()) {
+      if (clickedNav === pages[j].dataset.page) {
         pages[j].classList.add("active");
         window.scrollTo(0, 0);
       } else {
@@ -156,7 +156,8 @@ for (let i = 0; i < navigationLinks.length; i++) {
     }
 
     for (let j = 0; j < navigationLinks.length; j++) {
-      if (clickedNav === navigationLinks[j].innerHTML.toLowerCase().trim()) {
+      const navVal = navigationLinks[j].dataset.navLink || navigationLinks[j].innerHTML.toLowerCase().trim();
+      if (clickedNav === navVal) {
         navigationLinks[j].classList.add("active");
       } else {
         navigationLinks[j].classList.remove("active");
