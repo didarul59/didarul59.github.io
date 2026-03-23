@@ -196,12 +196,67 @@
         </header>
 
         <section class="vlog-detail-article">
-          <p>This tutorial summarizes the successful Wannier90 calculation for <b>MnO (Manganese Oxide)</b>, an antiferromagnetic insulator with rock-salt structure. Both up and down spin channels ran successfully with identical input files, providing a reference for more complex materials like FeO.</p>
-
           <h4>1. Introduction</h4>
-          <p>MnO is a classic example of a strongly correlated transition metal oxide. Using Wannier90, we can construct maximally localized Wannier functions (MLWFs) to analyze its electronic structure with high precision.</p>
+          <p>This document summarizes the successful Wannier90 calculation for <b>MnO (Manganese Oxide)</b>, an antiferromagnetic insulator with rock-salt structure. Both up and down spin channels ran successfully with identical input files, providing a reference for more complex materials like FeO.</p>
 
-          <h4>2. Understanding nbnd Calculation</h4>
+          <h4>2. Input Files Overview</h4>
+          <h5>2.1 NSCF Input File (MnO_nscf.in)</h5>
+          <div class="code-block">&amp;control
+    calculation = 'nscf'
+    restart_mode='from_scratch',
+    prefix='MnO',
+    pseudo_dir = '/home/didar/pseudo/',
+    outdir='./out/'
+    verbosity = 'high'
+ /
+&amp;system
+    ibrav = 0,
+    celldm(1) = 7.88,
+    nat = 4,
+    ntyp = 3,
+    ecutwfc = 50.0,
+    ecutrho = 500.0,
+    occupations = 'smearing',
+    smearing = 'gauss',
+    degauss = 0.01,
+    nspin=2,
+    starting_magnetization(1) =  0.5,
+    starting_magnetization(2) = -0.5,
+    nosym = .true.
+    noinv = .true.
+    nbnd = 36                % Total bands calculated
+ /
+&amp;electrons
+    mixing_beta = 0.3
+    conv_thr =  1.0d-10
+ /
+ATOMIC_SPECIES
+ Mn1  54.938  Mn.pbe-spn-rrkjus_psl.1.0.0.UPF
+ Mn2  54.938  Mn.pbe-spn-rrkjus_psl.1.0.0.UPF
+ O    15.999  O.pbe-n-rrkjus_psl.1.0.0.UPF
+
+ATOMIC_POSITIONS {alat}
+Mn1             -0.0000000000        0.0000000000        0.0000000000
+Mn2              0.5227536359        0.5227536359       -0.0071351948
+O                0.5263212717       -0.0035675591       -0.0035675591
+O                1.0490748311        0.5191860001       -0.0107028305
+
+CELL_PARAMETERS {alat}
+   1.045507271   0.515618443   0.515618443
+   0.515618443   1.045507271   0.515618443
+   0.515618443   0.515618443   1.045507271
+
+K_POINTS {crystal}
+64
+  0.00000000  0.00000000  0.00000000  1.562500e-02
+  ... (64 k-points) ...
+
+HUBBARD {ortho-atomic}
+U Mn1-3d 1.d-10          % Essentially U=0
+U Mn2-3d 1.d-10</div>
+
+          <h4>3. Understanding nbnd Calculation</h4>
+          <h5>3.1 Electron Counting for MnO</h5>
           <div class="vlog-table-container">
             <table class="vlog-table">
               <thead>
@@ -236,50 +291,275 @@
             </table>
           </div>
 
+          <h5>3.2 Band Calculation Logic</h5>
           <div class="equation">
             Total valence electrons = 26 <br>
-            For spin-polarized (nspin=2) → 26 bands needed for valence states.
+            Spin-polarized (nspin=2) → each band holds 1 electron <br>
+            Valence bands needed = 26 bands <br>
+            Extra empty bands for accuracy = 10 bands <br>
+            Total nbnd = 36
           </div>
 
-          <h4>3. NSCF Input Highlights</h4>
-          <span class="code-title">MnO_nscf.in snippet</span>
-          <div class="code-block">&amp;system
-    ibrav = 0,
-    celldm(1) = 7.88,
-    nat = 4,
-    ntyp = 3,
-    ecutwfc = 50.0,
-    nspin = 2,
-    nbnd = 36  ! 26 valence + 10 empty
- /</div>
+          <h5>3.3 Relationship with Wannier90 Parameters</h5>
+          <div class="equation">
+            nbnd (36) ≥ num_bands (26) ≥ num_wann (18) + exclude_bands (10)
+          </div>
+          <ul class="ul-disc">
+            <li><b>nbnd = 36</b>: What pw.x calculates (includes empty bands)</li>
+            <li><b>num_bands = 26</b>: What Wannier90 reads from DFT (valence bands)</li>
+            <li><b>exclude_bands : 1-10</b>: Removes core states</li>
+            <li><b>num_wann = 18</b>: Final Wannier functions</li>
+          </ul>
 
-          <h4>4. Projections &amp; Wannier Parameters</h4>
-          <p>We target 18 Wannier functions: 12 from Mn (s + d) and 6 from O (p).</p>
-          <div class="code-block">Begin Projections
-Mn:s;d           # 2 Mn × (1s + 5d) = 12
-O:p              # 2 O × 3p = 6
+          <h4>4. Wannier90 Input Files</h4>
+          <h5>4.1 MnO_up.win / MnO_down.win (Identical for both channels)</h5>
+          <div class="code-block">conv_window = 3
+num_iter = 0
+iprint = 1
+kmesh_tol = 1e-4
+
+Begin Projections
+Mn:s;d           # 2 Mn × (1s + 5d) = 12 orbitals
+O:p              # 2 O × 3p = 6 orbitals
 End Projections
+# Total: 18 Wannier functions
+
+dis_num_iter = 2000
+dis_mix_ratio = 1.0
+
+exclude_bands : 1-10    # Exclude core states
 
 num_wann  = 18
-num_bands = 26
-exclude_bands : 1-10</div>
+num_bands = 26           # Matches valence bands from electron count
+
+dis_win_min = 5.0
+dis_win_max = 35.0
+dis_froz_min = 5.0
+dis_froz_max = 18.0
+
+write_u_matrices = true
+
+Begin Unit_Cell_Cart
+Bohr
+8.23859516  4.06306984  4.06306984
+4.06306984  8.23859516  4.06306984
+4.06306984  4.06306984  8.23859516
+End Unit_Cell_Cart
+
+Begin Atoms_frac
+ Mn  0.00   0.00   0.00
+ Mn  0.50   0.50  -0.50
+ O   0.75  -0.25  -0.25
+ O   1.25   0.25  -0.75
+End Atoms_frac
+
+mp_grid = 4 4 4
+
+# K-points in crystal coordinates (64 points)
+Begin Kpoints
+  0.00000000  0.00000000  0.00000000
+  0.00000000  0.00000000  0.25000000
+  ... (all 64 k-points) ...
+End Kpoints
+
+bands_plot = true
+bands_num_points = 75
+
+begin kpoint_path
+Γ 0.0000000000  0.0000000000    0.0000000000 X 0.5000000000   0.0000000000    0.5000000000
+X 0.5000000000  0.0000000000    0.5000000000 U 0.6250000000   0.2500000000    0.6250000000
+U 0.6250000000  0.2500000000    0.6250000000 K 0.3750000000   0.3750000000    0.7500000000
+K 0.3750000000  0.3750000000    0.7500000000 Γ 0.0000000000   0.0000000000    0.0000000000
+Γ 0.0000000000  0.0000000000    0.0000000000 L 0.5000000000   0.5000000000    0.5000000000
+L 0.5000000000  0.5000000000    0.5000000000 W 0.5000000000   0.2500000000    0.7500000000
+W 0.5000000000  0.2500000000    0.7500000000 X 0.5000000000   0.0000000000    0.5000000000
+end kpoint_path
+
+write_hr = true
+write_xyz = true</div>
+
+          <h5>4.2 pw2wannier90 Input Files</h5>
+          <p><b>For up channel (pw2wan_MnO_up.in):</b></p>
+          <div class="code-block">&amp;inputpp
+   prefix = 'MnO'
+   outdir = './out/'
+   seedname = 'MnO_up'
+   spin_component = 'up'
+   write_mmn = .true.
+   write_amn = .true.
+/</div>
+          <p><b>For down channel (pw2wan_MnO_down.in):</b></p>
+          <div class="code-block">&amp;inputpp
+   prefix = 'MnO'
+   outdir = './out/'
+   seedname = 'MnO_down'
+   spin_component = 'down'
+   write_mmn = .true.
+   write_amn = .true.
+/</div>
 
           <h4>5. Workflow Steps</h4>
-          <p>Follow these steps to complete the calculation:</p>
-          <div class="code-block"># Step 1: Run NSCF
-mpirun -np 4 pw.x -i MnO_nscf.in &gt; MnO_nscf.out
+          <h5>Step 1: Generate k-points for NSCF</h5>
+          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 &gt;&gt; MnO_nscf.in</div>
+          <h5>Step 2: Run NSCF Calculation</h5>
+          <div class="code-block">mpirun -np 4 pw.x -i MnO_nscf.in &gt; MnO_nscf.out</div>
+          <h5>Step 3: Generate k-points for Wannier90</h5>
+          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_up.win
+~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_down.win</div>
+          <h5>Step 4: Wannier90 Pre-processing</h5>
+          <div class="code-block">wannier90.x -pp MnO_up
+wannier90.x -pp MnO_down</div>
+          <h5>Step 5: Run pw2wannier90</h5>
+          <div class="code-block">pw2wannier90.x &lt; pw2wan_MnO_up.in &gt; pw2wan_MnO_up.out
+pw2wannier90.x &lt; pw2wan_MnO_down.in &gt; pw2wan_MnO_down.out</div>
+          <h5>Step 6: Run Wannier90</h5>
+          <div class="code-block">wannier90.x MnO_up
+wannier90.x MnO_down</div>
+          <h5>Step 7: Verify Success</h5>
+          <div class="code-block"># Check for convergence
+grep "Final State" MnO_up.wout
+grep "Spread" MnO_up.wout
 
-# Step 2: Wannier90 Pre-processing
-wannier90.x -pp MnO_up
+# Plot bands
+gnuplot MnO_up_band.gnu</div>
 
-# Step 3: Run pw2wannier90
-pw2wannier90.x &lt; pw2wan_MnO_up.in &gt; pw2wan_MnO_up.out
+          <h4>6. Key Insights</h4>
+          <h5>6.1 Identical .win Files for Both Channels</h5>
+          <ul class="ul-disc">
+            <li>MnO's symmetric band structure allows the same parameters for up and down</li>
+            <li>Both channels ran successfully without modification</li>
+          </ul>
 
-# Step 4: Run Wannier90
-wannier90.x MnO_up</div>
+          <h5>6.2 Relationship Between nbnd and Wannier Parameters</h5>
+          <div class="vlog-table-container">
+            <table class="vlog-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Value</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>nbnd</td>
+                  <td>36</td>
+                  <td>Total bands calculated by pw.x</td>
+                </tr>
+                <tr>
+                  <td>num_bands</td>
+                  <td>26</td>
+                  <td>Bands used by Wannier90</td>
+                </tr>
+                <tr>
+                  <td>exclude_bands</td>
+                  <td>1-10</td>
+                  <td>Core states excluded</td>
+                </tr>
+                <tr>
+                  <td>num_wann</td>
+                  <td>18</td>
+                  <td>Target Wannier functions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="equation">
+            <b>Constraint:</b> nbnd ≥ num_bands ≥ num_wann + excluded_bands
+          </div>
+
+          <h5>6.3 Projections Count</h5>
+          <div class="equation">
+            Mn:s;d → 1s + 5d = 6 orbitals per Mn × 2 Mn = 12 <br>
+            O:p → 3 orbitals per O × 2 O = 6 <br>
+            <b>Total = 18 Wannier functions</b>
+          </div>
+
+          <h5>6.4 Energy Windows</h5>
+          <ul class="ul-disc">
+            <li><b>Outer window (5-35 eV)</b>: Contains all relevant bands</li>
+            <li><b>Frozen window (5-18 eV)</b>: Inner window for disentanglement</li>
+            <li>Works because MnO has a clean band gap</li>
+          </ul>
+
+          <h5>6.5 Why FeO is Different</h5>
+          <p>Unlike MnO, FeO shows:</p>
+          <ul class="ul-disc">
+            <li>Asymmetric band structures between up and down channels</li>
+            <li>Deep core states in down channel (-72 eV to -38 eV)</li>
+            <li>Different total band counts (72 vs 60)</li>
+            <li>Requires channel-specific parameters</li>
+          </ul>
+
+          <h4>7. Troubleshooting Guide</h4>
+          <h5>7.1 Common Errors and Solutions</h5>
+          <div class="vlog-table-container">
+            <table class="vlog-table">
+              <thead>
+                <tr>
+                  <th>Error</th>
+                  <th>Cause</th>
+                  <th>Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>mismatch in .eig file</td>
+                  <td>num_bands doesn't match DFT</td>
+                  <td>Check actual bands: awk '{print $1}' FeO_up.eig | sort -nu | tail -1</td>
+                </tr>
+                <tr>
+                  <td>fewer states in frozen window</td>
+                  <td>Not enough bands in energy range</td>
+                  <td>Widen energy windows or use frozen_bands</td>
+                </tr>
+                <tr>
+                  <td>more states in frozen window</td>
+                  <td>Too many bands in range</td>
+                  <td>Narrow window or use exact frozen_bands</td>
+                </tr>
+                <tr>
+                  <td>k-point mismatch</td>
+                  <td>K-points differ between files</td>
+                  <td>Use kmesh.pl for consistency</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h5>7.2 Diagnostic Commands</h5>
+          <div class="code-block"># Check total bands in .eig file
+awk '{print $1}' MnO_up.eig | sort -nu | tail -1
+
+# Check k-point count
+awk '{print $2}' MnO_up.eig | sort -nu | tail -1
+
+# Check energy range
+awk '{print $3}' MnO_up.eig | sort -n | head -1
+awk '{print $3}' MnO_up.eig | sort -n | tail -1
+
+# Check specific bands at first k-point
+awk '$2==1 &amp;&amp; $1&gt;=40 &amp;&amp; $1&lt;=50 {print}' MnO_up.eig</div>
+
+          <h4>8. Quick Reference Commands</h4>
+          <h5>8.1 File Management</h5>
+          <div class="code-block"># Create working copies
+cp MnO_up.win template_up.win
+cp MnO_down.win template_down.win
+
+# Check band counts
+awk '{print $1}' FeO_up.eig | sort -nu | tail -1
+awk '{print $1}' FeO_down.eig | sort -nu | tail -1</div>
+
+          <h5>8.2 kmesh.pl Usage</h5>
+          <div class="code-block"># For QE input (with weights)
+~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 &gt;&gt; nscf.in
+
+# For Wannier90 input (without weights)
+~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; seedname.win</div>
 
           <h4>Conclusion</h4>
-          <p>The identical behavior of up and down channels in MnO simplifies the workflow. For materials like FeO, you must account for asymmetry by checking the .eig files for each channel separately.</p>
+          <p>The successful MnO calculation demonstrates proper setup for a transition metal oxide, the correct relationship between DFT parameters and Wannier parameters, and a reliable workflow that can be extended to more complex materials like FeO.</p>
         </section>
       </article>
 
