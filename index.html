@@ -196,8 +196,33 @@
           <h4>1. Introduction</h4>
           <p>This document summarizes the successful Wannier90 calculation for <b>MnO (Manganese Oxide)</b>, an antiferromagnetic insulator with rock-salt structure. Both up and down spin channels ran successfully with identical input files, providing a reference for more complex materials like FeO.</p>
 
-          <h4>2. Input Files Overview</h4>
-          <h5>2.1 NSCF Input File (MnO_nscf.in)</h5>
+          <h4>2. Workflow Steps</h4>
+          <h5>Step 1: Generate k-points for NSCF</h5>
+          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 &gt;&gt; MnO_nscf.in</div>
+          <h5>Step 2: Run NSCF Calculation</h5>
+          <div class="code-block">mpirun -np 4 pw.x -i MnO_nscf.in &gt; MnO_nscf.out</div>
+          <h5>Step 3: Generate k-points for Wannier90</h5>
+          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_up.win
+~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_down.win</div>
+          <h5>Step 4: Wannier90 Pre-processing</h5>
+          <div class="code-block">wannier90.x -pp MnO_up
+wannier90.x -pp MnO_down</div>
+          <h5>Step 5: Run pw2wannier90</h5>
+          <div class="code-block">pw2wannier90.x &lt; pw2wan_MnO_up.in &gt; pw2wan_MnO_up.out
+pw2wannier90.x &lt; pw2wan_MnO_down.in &gt; pw2wan_MnO_down.out</div>
+          <h5>Step 6: Run Wannier90</h5>
+          <div class="code-block">wannier90.x MnO_up
+wannier90.x MnO_down</div>
+          <h5>Step 7: Verify Success</h5>
+          <div class="code-block"># Check for convergence
+grep "Final State" MnO_up.wout
+grep "Spread" MnO_up.wout
+
+# Plot bands
+gnuplot MnO_up_band.gnu</div>
+
+          <h4>3. Input Files Overview</h4>
+          <h5>3.1 NSCF Input File (MnO_nscf.in)</h5>
           <div class="code-block">&amp;control
     calculation = 'nscf'
     restart_mode='from_scratch',
@@ -395,39 +420,70 @@ write_xyz = true</div>
    write_amn = .true.
 /</div>
 
-          <h4>5. Workflow Steps</h4>
-          <h5>Step 1: Generate k-points for NSCF</h5>
-          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 &gt;&gt; MnO_nscf.in</div>
-          <h5>Step 2: Run NSCF Calculation</h5>
-          <div class="code-block">mpirun -np 4 pw.x -i MnO_nscf.in &gt; MnO_nscf.out</div>
-          <h5>Step 3: Generate k-points for Wannier90</h5>
-          <div class="code-block">~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_up.win
-~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 wan &gt;&gt; MnO_down.win</div>
-          <h5>Step 4: Wannier90 Pre-processing</h5>
-          <div class="code-block">wannier90.x -pp MnO_up
-wannier90.x -pp MnO_down</div>
-          <h5>Step 5: Run pw2wannier90</h5>
-          <div class="code-block">pw2wannier90.x &lt; pw2wan_MnO_up.in &gt; pw2wan_MnO_up.out
-pw2wannier90.x &lt; pw2wan_MnO_down.in &gt; pw2wan_MnO_down.out</div>
-          <h5>Step 6: Run Wannier90</h5>
-          <div class="code-block">wannier90.x MnO_up
-wannier90.x MnO_down</div>
-          <h5>Step 7: Verify Success</h5>
-          <div class="code-block"># Check for convergence
-grep "Final State" MnO_up.wout
-grep "Spread" MnO_up.wout
+          <h4>4. Understanding nbnd Calculation</h4>
+          <h5>4.1 Electron Counting for MnO</h5>
+          <div class="vlog-table-container">
+            <table class="vlog-table">
+              <thead>
+                <tr>
+                  <th>Atom</th>
+                  <th>Configuration</th>
+                  <th>Valence Electrons</th>
+                  <th>Count</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mn</td>
+                  <td>[Ar] 4s² 3d⁵</td>
+                  <td>7</td>
+                  <td>2</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td>O</td>
+                  <td>[He] 2s² 2p⁴</td>
+                  <td>6</td>
+                  <td>2</td>
+                  <td>12</td>
+                </tr>
+                <tr>
+                  <td colspan="4"><b>Total</b></td>
+                  <td><b>26</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-# Plot bands
-gnuplot MnO_up_band.gnu</div>
+          <h5>4.2 Band Calculation Logic</h5>
+          <div class="equation">
+            Total valence electrons = 26 <br>
+            Spin-polarized (nspin=2) → each band holds 1 electron <br>
+            Valence bands needed = 26 bands <br>
+            Extra empty bands for accuracy = 10 bands <br>
+            Total nbnd = 36
+          </div>
 
-          <h4>6. Key Insights</h4>
-          <h5>6.1 Identical .win Files for Both Channels</h5>
+          <h5>4.3 Relationship with Wannier90 Parameters</h5>
+          <div class="equation">
+            nbnd (36) ≥ num_bands (26) ≥ num_wann (18) + exclude_bands (10)
+          </div>
+          <ul class="ul-disc">
+            <li><b>nbnd = 36</b>: What pw.x calculates (includes empty bands)</li>
+            <li><b>num_bands = 26</b>: What Wannier90 reads from DFT (valence bands)</li>
+            <li><b>exclude_bands : 1-10</b>: Removes core states</li>
+            <li><b>num_wann = 18</b>: Final Wannier functions</li>
+          </ul>
+
+          <h4>5. Key Insights</h4>
+          <h5>5.1 Identical .win Files for Both Channels</h5>
           <ul class="ul-disc">
             <li>MnO's symmetric band structure allows the same parameters for up and down</li>
             <li>Both channels ran successfully without modification</li>
           </ul>
 
-          <h5>6.2 Relationship Between nbnd and Wannier Parameters</h5>
+          <h5>5.2 Relationship Between nbnd and Wannier Parameters</h5>
           <div class="vlog-table-container">
             <table class="vlog-table">
               <thead>
@@ -465,21 +521,21 @@ gnuplot MnO_up_band.gnu</div>
             <b>Constraint:</b> nbnd ≥ num_bands ≥ num_wann + excluded_bands
           </div>
 
-          <h5>6.3 Projections Count</h5>
+          <h5>5.3 Projections Count</h5>
           <div class="equation">
             Mn:s;d → 1s + 5d = 6 orbitals per Mn × 2 Mn = 12 <br>
             O:p → 3 orbitals per O × 2 O = 6 <br>
             <b>Total = 18 Wannier functions</b>
           </div>
 
-          <h5>6.4 Energy Windows</h5>
+          <h5>5.4 Energy Windows</h5>
           <ul class="ul-disc">
             <li><b>Outer window (5-35 eV)</b>: Contains all relevant bands</li>
             <li><b>Frozen window (5-18 eV)</b>: Inner window for disentanglement</li>
             <li>Works because MnO has a clean band gap</li>
           </ul>
 
-          <h5>6.5 Why FeO is Different</h5>
+          <h5>5.5 Why FeO is Different</h5>
           <p>Unlike MnO, FeO shows:</p>
           <ul class="ul-disc">
             <li>Asymmetric band structures between up and down channels</li>
@@ -488,8 +544,8 @@ gnuplot MnO_up_band.gnu</div>
             <li>Requires channel-specific parameters</li>
           </ul>
 
-          <h4>7. Troubleshooting Guide</h4>
-          <h5>7.1 Common Errors and Solutions</h5>
+          <h4>6. Troubleshooting Guide</h4>
+          <h5>6.1 Common Errors and Solutions</h5>
           <div class="vlog-table-container">
             <table class="vlog-table">
               <thead>
@@ -524,7 +580,7 @@ gnuplot MnO_up_band.gnu</div>
             </table>
           </div>
 
-          <h5>7.2 Diagnostic Commands</h5>
+          <h5>6.2 Diagnostic Commands</h5>
           <div class="code-block"># Check total bands in .eig file
 awk '{print $1}' MnO_up.eig | sort -nu | tail -1
 
@@ -538,8 +594,8 @@ awk '{print $3}' MnO_up.eig | sort -n | tail -1
 # Check specific bands at first k-point
 awk '$2==1 &amp;&amp; $1&gt;=40 &amp;&amp; $1&lt;=50 {print}' MnO_up.eig</div>
 
-          <h4>8. Quick Reference Commands</h4>
-          <h5>8.1 File Management</h5>
+          <h4>7. Quick Reference Commands</h4>
+          <h5>7.1 File Management</h5>
           <div class="code-block"># Create working copies
 cp MnO_up.win template_up.win
 cp MnO_down.win template_down.win
@@ -548,7 +604,7 @@ cp MnO_down.win template_down.win
 awk '{print $1}' FeO_up.eig | sort -nu | tail -1
 awk '{print $1}' FeO_down.eig | sort -nu | tail -1</div>
 
-          <h5>8.2 kmesh.pl Usage</h5>
+          <h5>7.2 kmesh.pl Usage</h5>
           <div class="code-block"># For QE input (with weights)
 ~/q-e-qe-7.3/external/wannier90/utility/kmesh.pl 4 4 4 &gt;&gt; nscf.in
 
