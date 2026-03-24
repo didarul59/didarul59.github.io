@@ -718,10 +718,34 @@ awk '{print $1}' FeO_down.eig | sort -nu | tail -1</div>
           <h4>Installation Script</h4>
           <p>Save this as <code>install_vampire_cuda.sh</code> and run:</p>
           <div class="code-block">#!/bin/bash
-# VAMPIRE GPU Installation Script
+#===============================================================================
+# VAMPIRE GPU Installation Script - Complete Working Version
+#===============================================================================
+# This script installs and configures VAMPIRE with CUDA GPU acceleration
+# Tested on Arch Linux with NVIDIA GTX 1050 Ti (Compute Capability 6.1)
+#===============================================================================
 
-set -e
+set -e  # Exit on error
 
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() { echo -e "${GREEN}[INFO]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+print_step() { echo -e "\n${BLUE}========================================${NC}\n${BLUE}$1${NC}\n${BLUE}========================================${NC}"; }
+
+#===============================================================================
+# Step 1: Set Variables
+#===============================================================================
+print_step "Step 1: Setting up variables"
+
+# Detect home directory
 HOME_DIR="$HOME"
 CONDA_PATH="$HOME_DIR/miniconda3"
 CONDA_ENV="gcc12"
@@ -729,62 +753,111 @@ CUDA_BASE="/opt/nvidia/hpc_sdk/Linux_x86_64/23.9"
 CUDA_PATH="$CUDA_BASE/cuda/12.2"
 CUDA_MATH_LIB="$CUDA_BASE/math_libs/12.2/targets/x86_64-linux/lib"
 
-echo "=== Installing Miniconda ==="
+print_status "Home directory: $HOME_DIR"
+print_status "CUDA path: $CUDA_PATH"
+
+#===============================================================================
+# Step 2: Install/Setup Conda
+#===============================================================================
+print_step "Step 2: Setting up Miniconda"
+
 if [ ! -d "$CONDA_PATH" ]; then
+    print_status "Downloading Miniconda..."
     cd $HOME_DIR
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     bash miniconda.sh -b -p $CONDA_PATH
     rm miniconda.sh
+    print_status "Miniconda installed"
+else
+    print_status "Miniconda already installed"
 fi
 
+# Initialize conda
 $CONDA_PATH/bin/conda init bash
 source $HOME_DIR/.bashrc
 export PATH="$CONDA_PATH/bin:$PATH"
 
-echo "=== Creating GCC 12.3.0 environment ==="
+#===============================================================================
+# Step 3: Create Conda Environment with GCC 12
+#===============================================================================
+print_step "Step 3: Creating conda environment with GCC 12.3.0"
+
+if conda env list | grep -q "$CONDA_ENV"; then
+    print_status "Removing existing $CONDA_ENV environment..."
+    conda env remove -n $CONDA_ENV -y
+fi
+
+print_status "Creating gcc12 environment (this may take a few minutes)..."
 conda create -n $CONDA_ENV -c conda-forge gxx_linux-64=12.3.0 -y
+
+# Activate environment
 source $CONDA_PATH/etc/profile.d/conda.sh
 conda activate $CONDA_ENV
 
-echo "=== Setting CUDA environment ==="
-export PATH="$CUDA_PATH/bin:$PATH"
-export LD_LIBRARY_PATH="$CUDA_MATH_LIB:$CUDA_PATH/lib64:$LD_LIBRARY_PATH"
+CONDA_PREFIX=$(conda info --base)/envs/$CONDA_ENV
+print_status "GCC version: \$(gcc --version | head -1)"
+print_status "Conda prefix: $CONDA_PREFIX"
 
-echo "=== Cloning VAMPIRE ==="
+#===============================================================================
+# Step 4: Set CUDA Environment
+#===============================================================================
+print_step "Step 4: Setting CUDA environment"
+
+export PATH="$CUDA_PATH/bin:\$PATH"
+export LD_LIBRARY_PATH="$CUDA_MATH_LIB:$CUDA_PATH/lib64:\$LD_LIBRARY_PATH"
+
+print_status "CUDA version: \$(nvcc --version | head -1)"
+
+#===============================================================================
+# Step 5: Clone VAMPIRE
+#===============================================================================
+print_step "Step 5: Cloning VAMPIRE repository"
+
 cd $HOME_DIR
-[ -d "vampire" ] &amp;&amp; rm -rf vampire
+if [ -d "vampire" ]; then
+    print_status "Removing existing vampire directory..."
+    rm -rf vampire
+fi
+
 git clone https://github.com/richard-evans/vampire.git
 cd vampire
 git checkout cuda
+print_status "VAMPIRE cloned and switched to CUDA branch"
 
-echo "=== Fixing headers ==="
+#===============================================================================
+# Step 6: Fix Missing Headers
+#===============================================================================
+print_step "Step 6: Fixing missing headers (#include &lt;cstdint&gt;)"
+
+print_status "Adding cstdint to files using uint64_t..."
 for file in hdr/*.hpp src/*/*.cpp; do
     if [ -f "$file" ] &amp;&amp; grep -q "uint64_t" "$file" &amp;&amp; ! grep -q "#include &lt;cstdint&gt;" "$file"; then
         sed -i '1i #include &lt;cstdint&gt;' "$file"
     fi
 done
 
-echo "=== Updating CUDA API ==="
+#===============================================================================
+# Step 7: Fix Deprecated CUDA API
+#===============================================================================
+print_step "Step 7: Fixing deprecated CUDA API constants"
+
+print_status "Replacing CUSPARSE_CSRMV_ALG1 with CUSPARSE_SPMV_CSR_ALG1..."
 for file in src/cuda/*.cu; do
     if [ -f "$file" ] &amp;&amp; grep -q "CUSPARSE_CSRMV_ALG1" "$file"; then
         sed -i 's/CUSPARSE_CSRMV_ALG1/CUSPARSE_SPMV_CSR_ALG1/g' "$file"
     fi
 done
 
-echo "=== Adding missing includes ==="
-for file in src/simulate/*.cpp src/data/*.cpp src/spintorque/*.cpp src/utility/*.cpp; do
-    if [ -f "$file" ]; then
-        if grep -q "atoms::" "$file" &amp;&amp; ! grep -q "#include \"atoms.hpp\"" "$file"; then
-            sed -i '1i #include "atoms.hpp"' "$file"
-        fi
-        if grep -q "terminaltextcolor\|zlog\|zTs" "$file" &amp;&amp; ! grep -q "#include \"vio.hpp\"" "$file"; then
-            sed -i '1i #include "vio.hpp"' "$file"
-        fi
-    fi
-done
+#===============================================================================
+# Step 8: Create CUDA Makefile
+#===============================================================================
+print_step "Step 8: Creating CUDA makefile"
 
-echo "=== Creating CUDA makefile ==="
 cat &gt; src/cuda/makefile &lt;&lt; EOF
+#--------------------------------------------------------------
+#                 Makefile for cuda module
+#--------------------------------------------------------------
+
 CONDA_PREFIX := $CONDA_PREFIX
 
 NVCC_VERSION=\$(shell nvcc -ccbin \$(CONDA_PREFIX)/bin/x86_64-conda-linux-gnu-g++ -allow-unsupported-compiler --version | tail -n 1 | cut -b 38-)
@@ -828,39 +901,101 @@ cuda-profile: CUDA_CFLAGS += -DCUDA_DEBUG -DCUDA_SPIN_DEBUG --profile
 cuda-profile: cuda
 EOF
 
-echo "=== Building VAMPIRE CUDA ==="
+#===============================================================================
+# Step 9: Remove problematic compiler flags
+#===============================================================================
+print_step "Step 9: Fixing compiler flags"
+
 sed -i 's/-Wsign-compare//g' makefile
+
+#===============================================================================
+# Step 10: Build VAMPIRE CUDA
+#===============================================================================
+print_step "Step 10: Building VAMPIRE CUDA version"
+
+print_status "Cleaning previous builds..."
 make clean
+
+print_status "Starting CUDA build (this may take 5-10 minutes)..."
 make cuda
 
-echo "=== Configuring runtime ==="
-cat &gt; $HOME_DIR/vampire/run_vampire.sh &lt;&lt; EOF2
+if [ -f "vampire-cuda" ]; then
+    print_status "✓ Build successful!"
+    ls -lh vampire-cuda
+else
+    print_error "Build failed. Please check the error messages above."
+    exit 1
+fi
+
+#===============================================================================
+# Step 11: Configure Runtime Paths
+#===============================================================================
+print_step "Step 11: Configuring runtime library paths"
+
+# Create convenience script
+cat &gt; $HOME_DIR/vampire/run_vampire.sh &lt;&lt; EOF
 #!/bin/bash
+# VAMPIRE GPU Runner Script
+
+# Activate conda environment
 source $CONDA_PATH/etc/profile.d/conda.sh
 conda activate $CONDA_ENV
+
+# Set library paths
 export LD_LIBRARY_PATH=$CUDA_MATH_LIB:$CUDA_PATH/lib64:\$LD_LIBRARY_PATH
+
+# Run VAMPIRE
 cd $HOME_DIR/vampire
 ./vampire-cuda "\$@"
-EOF2
+EOF
+
 chmod +x $HOME_DIR/vampire/run_vampire.sh
 
+# Add to bashrc
 if ! grep -q "VAMPIRE_GPU_SETUP" $HOME_DIR/.bashrc; then
-    cat &gt;&gt; $HOME_DIR/.bashrc &lt;&lt; EOF3
+    cat &gt;&gt; $HOME_DIR/.bashrc &lt;&lt; EOF
 
 # VAMPIRE GPU Setup
 export VAMPIRE_GPU_SETUP=1
 export PATH=\$PATH:$HOME_DIR/vampire
 export LD_LIBRARY_PATH=$CUDA_MATH_LIB:$CUDA_PATH/lib64:\$LD_LIBRARY_PATH
 alias vampire-cuda='cd $HOME_DIR/vampire &amp;&amp; ./vampire-cuda'
-EOF3
+EOF
+    print_status "Added VAMPIRE configuration to .bashrc"
 fi
 
-echo "=== Installation Complete! ==="
+#===============================================================================
+# Step 12: Test the Installation
+#===============================================================================
+print_step "Step 12: Testing the installation"
+
+print_status "Running quick test..."
+cd $HOME_DIR/vampire
+export LD_LIBRARY_PATH=$CUDA_MATH_LIB:$CUDA_PATH/lib64:$LD_LIBRARY_PATH
+
+# Run a quick test (first 20 lines)
+./vampire-cuda 2&gt;&amp;1 | head -20 || true
+
+#===============================================================================
+# Installation Complete
+#===============================================================================
+print_step "INSTALLATION COMPLETE!"
+
+echo ""
+echo -e "\${GREEN}✓ VAMPIRE CUDA successfully installed!\${NC}"
 echo ""
 echo "To run VAMPIRE:"
-echo "  vampire-cuda"
-echo "  or"
-echo "  ~/vampire/run_vampire.sh"</div>
+echo "  1. Open a new terminal or run: source ~/.bashrc"
+echo "  2. Run: vampire-cuda"
+echo "  3. Or use: ~/vampire/run_vampire.sh"
+echo ""
+echo "To test GPU performance:"
+echo "  cd ~/vampire &amp;&amp; ./vampire-cuda"
+echo ""
+echo "To monitor GPU usage (in another terminal):"
+echo "  nvidia-smi"
+echo ""
+echo -e "\${GREEN}Enjoy your GPU-accelerated simulations!\${NC}"</div>
           <p>Run the script:</p>
           <div class="code-block">chmod +x install_vampire_cuda.sh
 ./install_vampire_cuda.sh</div>
