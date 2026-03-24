@@ -154,7 +154,7 @@
             <button class="navbar-link active" data-nav-link="about">About</button>
           </li>
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link="vlog">Vlog</button>
+            <button class="navbar-link" data-nav-link="blog">Blog</button>
           </li>
           <!-- <li class="navbar-item">
             <button class="navbar-link" data-nav-link="cv">CV</button>
@@ -199,14 +199,29 @@
         </section>
       </article>
 
-      <!-- Vlog -->
-      <article class="vlog" data-page="vlog">
+      <!-- Blog -->
+      <article class="vlog" data-page="blog">
         <header>
-          <h3 class="h3 article-title">VLOGS</h3>
+          <h3 class="h3 article-title">BLOGS</h3>
         </header>
 
         <section class="blog-posts">
           <ul class="blog-posts-list">
+            <li class="blog-post-item">
+              <a href="#vampire-cuda" data-nav-link="vampire-cuda">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-4.jpg" alt="VAMPIRE CUDA Tutorial" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <div class="blog-meta">
+                    <p class="blog-category">Research</p>
+                    <span class="dot"></span>
+                    <time datetime="2026-03-24">Mar 24, 2026</time>
+                  </div>
+                  <h3 class="h3 blog-item-title">GPU-Accelerated VAMPIRE Simulations with CUDA</h3>
+                </div>
+              </a>
+            </li>
             <li class="blog-post-item">
               <a href="#mno-tutorial" data-nav-link="mno-tutorial">
                 <figure class="blog-banner-box">
@@ -229,9 +244,9 @@
       <!-- Vlog Detail: MnO Tutorial -->
       <article class="vlog-detail" data-page="mno-tutorial">
         <header>
-          <div class="back-btn" data-nav-link="vlog">
+          <div class="back-btn" data-nav-link="blog">
             <ion-icon name="chevron-back"></ion-icon>
-            <span>Back to Vlogs</span>
+            <span>Back to Blogs</span>
           </div>
           <h3 class="h3 article-title">MnO Wannier90 Tutorial: Complete Workflow Analysis</h3>
         </header>
@@ -657,6 +672,230 @@ awk '{print $1}' FeO_down.eig | sort -nu | tail -1</div>
 
           <h4>Conclusion</h4>
           <p>The successful MnO calculation demonstrates proper setup for a transition metal oxide, the correct relationship between DFT parameters and Wannier parameters, and a reliable workflow that can be extended to more complex materials like FeO.</p>
+        </section>
+      </article>
+
+      <!-- Vlog Detail: VAMPIRE CUDA Tutorial -->
+      <article class="vlog-detail" data-page="vampire-cuda">
+        <header>
+          <div class="back-btn" data-nav-link="blog">
+            <ion-icon name="chevron-back"></ion-icon>
+            <span>Back to Blogs</span>
+          </div>
+          <h3 class="h3 article-title">🚀 Complete Guide: GPU-Accelerated VAMPIRE Simulations with CUDA</h3>
+        </header>
+
+        <section class="vlog-detail-article">
+          <div class="blog-meta">
+            <p class="blog-category">Research</p>
+            <span class="dot"></span>
+            <time datetime="2026-03-24">March 24, 2026</time>
+          </div>
+
+          <div style="margin-bottom: 20px; font-size: var(--fs-6); color: var(--light-gray-70);">
+            <p><b>Author:</b> Didarul Islam</p>
+            <p><b>System:</b> Arch Linux | NVIDIA GTX 1050 Ti | CUDA 12.2</p>
+          </div>
+
+          <p>A step-by-step tutorial for building and running the GPU-accelerated version of VAMPIRE micromagnetic simulation code on Linux systems.</p>
+
+          <h4>Introduction</h4>
+          <p>VAMPIRE (Vampire is a highly extensible atomistic magnetic simulation package) is a powerful code for micromagnetic simulations. GPU acceleration can provide <b>up to 20x speedup</b> for large-scale simulations.</p>
+          <p>This tutorial provides a single script to build VAMPIRE with CUDA support on modern Linux systems.</p>
+
+          <h4>Prerequisites</h4>
+          
+          <h5>Software</h5>
+          <ul class="ul-disc" style="margin-left: 20px; margin-bottom: 15px;">
+            <li><b>NVIDIA Drivers</b> (version ≥ 535)</li>
+            <li><b>CUDA Toolkit</b> (version 12.2 or compatible)</li>
+            <li><b>Git</b></li>
+          </ul>
+
+          <p>Check your GPU:</p>
+          <div class="code-block">nvidia-smi</div>
+
+          <h4>Installation Script</h4>
+          <p>Save this as <code>install_vampire_cuda.sh</code> and run:</p>
+          <div class="code-block">#!/bin/bash
+# VAMPIRE GPU Installation Script
+
+set -e
+
+HOME_DIR="$HOME"
+CONDA_PATH="$HOME_DIR/miniconda3"
+CONDA_ENV="gcc12"
+CUDA_BASE="/opt/nvidia/hpc_sdk/Linux_x86_64/23.9"
+CUDA_PATH="$CUDA_BASE/cuda/12.2"
+CUDA_MATH_LIB="$CUDA_BASE/math_libs/12.2/targets/x86_64-linux/lib"
+
+echo "=== Installing Miniconda ==="
+if [ ! -d "$CONDA_PATH" ]; then
+    cd $HOME_DIR
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    bash miniconda.sh -b -p $CONDA_PATH
+    rm miniconda.sh
+fi
+
+$CONDA_PATH/bin/conda init bash
+source $HOME_DIR/.bashrc
+export PATH="$CONDA_PATH/bin:$PATH"
+
+echo "=== Creating GCC 12.3.0 environment ==="
+conda create -n $CONDA_ENV -c conda-forge gxx_linux-64=12.3.0 -y
+source $CONDA_PATH/etc/profile.d/conda.sh
+conda activate $CONDA_ENV
+
+echo "=== Setting CUDA environment ==="
+export PATH="$CUDA_PATH/bin:$PATH"
+export LD_LIBRARY_PATH="$CUDA_MATH_LIB:$CUDA_PATH/lib64:$LD_LIBRARY_PATH"
+
+echo "=== Cloning VAMPIRE ==="
+cd $HOME_DIR
+[ -d "vampire" ] &amp;&amp; rm -rf vampire
+git clone https://github.com/richard-evans/vampire.git
+cd vampire
+git checkout cuda
+
+echo "=== Fixing headers ==="
+for file in hdr/*.hpp src/*/*.cpp; do
+    if [ -f "$file" ] &amp;&amp; grep -q "uint64_t" "$file" &amp;&amp; ! grep -q "#include &lt;cstdint&gt;" "$file"; then
+        sed -i '1i #include &lt;cstdint&gt;' "$file"
+    fi
+done
+
+echo "=== Updating CUDA API ==="
+for file in src/cuda/*.cu; do
+    if [ -f "$file" ] &amp;&amp; grep -q "CUSPARSE_CSRMV_ALG1" "$file"; then
+        sed -i 's/CUSPARSE_CSRMV_ALG1/CUSPARSE_SPMV_CSR_ALG1/g' "$file"
+    fi
+done
+
+echo "=== Adding missing includes ==="
+for file in src/simulate/*.cpp src/data/*.cpp src/spintorque/*.cpp src/utility/*.cpp; do
+    if [ -f "$file" ]; then
+        if grep -q "atoms::" "$file" &amp;&amp; ! grep -q "#include \"atoms.hpp\"" "$file"; then
+            sed -i '1i #include "atoms.hpp"' "$file"
+        fi
+        if grep -q "terminaltextcolor\|zlog\|zTs" "$file" &amp;&amp; ! grep -q "#include \"vio.hpp\"" "$file"; then
+            sed -i '1i #include "vio.hpp"' "$file"
+        fi
+    fi
+done
+
+echo "=== Creating CUDA makefile ==="
+cat &gt; src/cuda/makefile &lt;&lt; EOF
+CONDA_PREFIX := $CONDA_PREFIX
+
+NVCC_VERSION=\$(shell nvcc -ccbin \$(CONDA_PREFIX)/bin/x86_64-conda-linux-gnu-g++ -allow-unsupported-compiler --version | tail -n 1 | cut -b 38-)
+NVCC=nvcc -ccbin \$(CONDA_PREFIX)/bin/x86_64-conda-linux-gnu-g++ -allow-unsupported-compiler -DCOMP='\"NVCC \$(NVCC_VERSION)\"'
+
+CUDALIBS=-L$CUDA_PATH/lib64 -L$CUDA_MATH_LIB -lcudart -lcusparse -lcurand
+
+CUDA_OBJECTS = \\
+	obj/cuda/config.o \\
+	obj/cuda/data.o \\
+	obj/cuda/dipole.o \\
+	obj/cuda/exchange_fields.o \\
+	obj/cuda/external_fields.o \\
+	obj/cuda/finalize.o \\
+	obj/cuda/initialize.o \\
+	obj/cuda/internal.o \\
+	obj/cuda/llg_heun.o \\
+	obj/cuda/monte_carlo.o \\
+	obj/cuda/spin_fields.o \\
+	obj/cuda/statistics.o \\
+	obj/cuda/transfer.o
+
+CUDA_ARCH = -arch=sm_61
+CUDA_PR = -DCUDA_DP
+CUDA_MATRIX_TYPE = CSR
+
+CUDA_CFLAGS = -O3 -I./hdr -I$CUDA_PATH/include -I$CUDA_BASE/math_libs/12.2/targets/x86_64-linux/include -DCUDA \$(CUDA_ARCH) --use_fast_math -ftz=true -std=c++14 -Wno-deprecated-gpu-targets
+
+\$(CUDA_OBJECTS): obj/%.o: src/%.cu
+	mkdir -p obj/cuda
+	\$(NVCC) \$&lt; -dc -o \$@ \$(CUDA_CFLAGS) \$(CUDA_PR) -DCUDA_MATRIX=\$(CUDA_MATRIX_TYPE)
+
+cuda: GCC_CFLAGS += -DCUDA
+cuda: \$(OBJECTS) \$(CUDA_OBJECTS)
+	\$(NVCC) \$(CUDA_CFLAGS) \$(GCC_LDFLAGS) \$(LIBS) \$(CUDALIBS) \$(OBJECTS) \$(CUDA_OBJECTS) -o \$(CUDAEXECUTABLE)
+
+cuda-debug: CUDA_CFLAGS += -DCUDA_DEBUG -DCUDA_SPIN_DEBUG
+cuda-debug: cuda
+
+cuda-profile: CUDA_CFLAGS += -DCUDA_DEBUG -DCUDA_SPIN_DEBUG --profile
+cuda-profile: cuda
+EOF
+
+echo "=== Building VAMPIRE CUDA ==="
+sed -i 's/-Wsign-compare//g' makefile
+make clean
+make cuda
+
+echo "=== Configuring runtime ==="
+cat &gt; $HOME_DIR/vampire/run_vampire.sh &lt;&lt; EOF2
+#!/bin/bash
+source $CONDA_PATH/etc/profile.d/conda.sh
+conda activate $CONDA_ENV
+export LD_LIBRARY_PATH=$CUDA_MATH_LIB:$CUDA_PATH/lib64:\$LD_LIBRARY_PATH
+cd $HOME_DIR/vampire
+./vampire-cuda "\$@"
+EOF2
+chmod +x $HOME_DIR/vampire/run_vampire.sh
+
+if ! grep -q "VAMPIRE_GPU_SETUP" $HOME_DIR/.bashrc; then
+    cat &gt;&gt; $HOME_DIR/.bashrc &lt;&lt; EOF3
+
+# VAMPIRE GPU Setup
+export VAMPIRE_GPU_SETUP=1
+export PATH=\$PATH:$HOME_DIR/vampire
+export LD_LIBRARY_PATH=$CUDA_MATH_LIB:$CUDA_PATH/lib64:\$LD_LIBRARY_PATH
+alias vampire-cuda='cd $HOME_DIR/vampire &amp;&amp; ./vampire-cuda'
+EOF3
+fi
+
+echo "=== Installation Complete! ==="
+echo ""
+echo "To run VAMPIRE:"
+echo "  vampire-cuda"
+echo "  or"
+echo "  ~/vampire/run_vampire.sh"</div>
+          <p>Run the script:</p>
+          <div class="code-block">chmod +x install_vampire_cuda.sh
+./install_vampire_cuda.sh</div>
+
+          <h4>Testing Your Installation</h4>
+          <h5>Run the Default Benchmark</h5>
+          <div class="code-block">vampire-cuda</div>
+          <p>Expected output:</p>
+          <div class="code-block">================================================================================
+Vampire - A code for atomistic simulation of magnetic materials
+================================================================================
+Number of atoms generated: 10648
+CUDA has been enabled in double precision mode
+Starting Simulation with Program Benchmark...
+10000      0.893772   
+Simulation run time [s]: 2.38578
+CUDA time taken: 2.50062</div>
+
+          <h4>Quick Reference</h4>
+          <h5>Run VAMPIRE</h5>
+          <div class="code-block">vampire-cuda
+# or
+~/vampire/run_vampire.sh</div>
+          <h5>Rebuild (if needed)</h5>
+          <div class="code-block">cd ~/vampire
+conda activate gcc12
+make clean
+make cuda</div>
+
+          <h4>References</h4>
+          <ul class="ul-disc" style="margin-left: 20px; margin-bottom: 15px;">
+            <li><a href="https://github.com/richard-evans/vampire" target="_blank" style="color: var(--orange-yellow-crayola);">VAMPIRE GitHub Repository</a></li>
+            <li><a href="https://docs.nvidia.com/cuda/" target="_blank" style="color: var(--orange-yellow-crayola);">NVIDIA CUDA Documentation</a></li>
+            <li><a href="https://docs.conda.io/" target="_blank" style="color: var(--orange-yellow-crayola);">Conda Documentation</a></li>
+          </ul>
         </section>
       </article>
 
