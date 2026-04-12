@@ -87,11 +87,6 @@
           <h1 class="name" title="Md. Didarul Islam">Md. Didarul Islam</h1>
           <p class="title" style="font-size:16px">Quantamaniacally Materialistics</p>
         </div>
-
-        <button class="info_more-btn" data-sidebar-btn>
-          <span>Show Contacts</span>
-          <ion-icon name="chevron-down"></ion-icon>
-        </button>
       </div>
 
       <div class="sidebar-info_more">
@@ -207,6 +202,21 @@
 
         <section class="blog-posts">
           <ul class="blog-posts-list">
+            <li class="blog-post-item">
+              <a href="#qe-gpu" data-nav-link="qe-gpu">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-5.jpg" alt="GPU Accelerated Quantum Espresso" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <div class="blog-meta">
+                    <p class="blog-category">Research</p>
+                    <span class="dot"></span>
+                    <time datetime="2026-04-12">Apr 12, 2026</time>
+                  </div>
+                  <h3 class="h3 blog-item-title">GPU-Accelerated Quantum Espresso with CUDA</h3>
+                </div>
+              </a>
+            </li>
             <li class="blog-post-item">
               <a href="#vampire-cuda" data-nav-link="vampire-cuda">
                 <figure class="blog-banner-box">
@@ -672,6 +682,151 @@ awk '{print $1}' FeO_down.eig | sort -nu | tail -1</div>
 
           <h4>Conclusion</h4>
           <p>The successful MnO calculation demonstrates proper setup for a transition metal oxide, the correct relationship between DFT parameters and Wannier parameters, and a reliable workflow that can be extended to more complex materials like FeO.</p>
+        </section>
+      </article>
+
+      <!-- Vlog Detail: GPU-Accelerated Quantum Espresso -->
+      <article class="vlog-detail" data-page="qe-gpu">
+        <header>
+          <div class="back-btn" data-nav-link="blog">
+            <ion-icon name="chevron-back"></ion-icon>
+            <span>Back to Blogs</span>
+          </div>
+          <h3 class="h3 article-title">GPU-Accelerated Quantum Espresso: Complete Setup Guide</h3>
+        </header>
+
+        <section class="vlog-detail-article">
+          <div class="blog-meta">
+            <p class="blog-category"></p>
+            <time datetime="2026-04-12"></time>
+          </div>
+
+          <div style="margin-bottom: 25px; padding: 18px 22px; background: var(--onyx); border-radius: 12px; border-left: 4px solid hsl(45, 100%, 72%); font-size: var(--fs-6); color: var(--light-gray-70);">
+            <p style="margin-bottom: 8px;"><b>Author:</b> Md. Didarul Islam</p>
+            <p style="margin-bottom: 8px;"><b>System:</b> Arch Linux | NVIDIA GPU | CUDA 12.2 | NVIDIA HPC SDK 23.9</p>
+            <p style="margin-bottom: 0;"><b>QE Version:</b> 7.3</p>
+          </div>
+
+          <p>A comprehensive guide to building and running GPU-accelerated Quantum Espresso with CUDA support for high-performance DFT calculations.</p>
+
+          <!-- ====== STEP 1 ====== -->
+          <div class="step-section">
+            <h4>📋 Step 1: Prerequisites</h4>
+
+            <h5>Required Software</h5>
+            <ul class="ul-disc">
+              <li><b>CUDA Toolkit 12.2</b></li>
+              <li><b>NVIDIA HPC SDK 23.9</b></li>
+              <li><b>OpenMPI</b> (compatible with NVIDIA HPC SDK)</li>
+              <li><b>SCALAPACK</b> libraries</li>
+            </ul>
+
+            <h5>Verify Your GPU</h5>
+            <p>Make sure your NVIDIA GPU is properly detected before proceeding:</p>
+            <div class="code-block">nvidia-smi</div>
+          </div>
+
+          <!-- ====== STEP 2 ====== -->
+          <div class="step-section">
+            <h4>⚙️ Step 2: Configure Environment</h4>
+            <p>Set up the necessary environment variables for QE GPU support. Add the following to your <code>~/.bashrc</code> for a permanent configuration:</p>
+            <div class="code-block">echo '' >> ~/.bashrc
+echo '# QE GPU Environment' >> ~/.bashrc
+echo 'export NVHPC_HOME=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9' >> ~/.bashrc
+echo 'export CUDA_HOME=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/cuda/12.2' >> ~/.bashrc
+echo 'export PATH=$NVHPC_HOME/compilers/bin:$CUDA_HOME/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$NVHPC_HOME/compilers/lib:$NVHPC_HOME/REDIST/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/comm_libs/openmpi4/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+echo 'export PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/comm_libs/openmpi4/bin:$PATH' >> ~/.bashrc
+echo 'export MPC_GDR_SYNC_INIT=1' >> ~/.bashrc
+echo 'export CUDA_MANAGED_FORCE_DEVICE_ALLOC=1' >> ~/.bashrc
+echo 'export CUDA_VISIBLE_DEVICES=0,1' >> ~/.bashrc
+echo 'export OMP_NUM_THREADS=1' >> ~/.bashrc
+echo 'export OMPI_MCA_btl=^openib' >> ~/.bashrc</div>
+            <p>Then reload your shell:</p>
+            <div class="code-block">source ~/.bashrc</div>
+          </div>
+
+          <!-- ====== STEP 3 ====== -->
+          <div class="step-section">
+            <h4>🔨 Step 3: Build Quantum Espresso with GPU Support</h4>
+
+            <h5>Navigate to QE Directory</h5>
+            <div class="code-block">cd /home/cuda/q-e-qe-7.3</div>
+
+            <h5>Configure with GPU Support</h5>
+            <div class="code-block">./configure \
+  --with-cuda=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/cuda/12.2 \
+  --with-cuda-runtime=12.2 \
+  --with-cuda-cc=61 \
+  --enable-openmp \
+  --with-scalapack=yes \
+  --with-cuda-mpi=yes \
+  FC=nvfortran \
+  MPIF90=mpif90 \
+  CC=nvc \
+  CXX=nvc++</div>
+
+            <p><b>Configuration Options Explained:</b></p>
+            <ul class="ul-disc">
+              <li><code>--with-cuda</code>: Path to CUDA toolkit</li>
+              <li><code>--with-cuda-runtime=12.2</code>: CUDA runtime version</li>
+              <li><code>--with-cuda-cc=61</code>: Compute capability (6.1 for GTX 1050 Ti, 6.1 for GTX 1060 — adjust for your GPU)</li>
+              <li><code>--enable-openmp</code>: Enable OpenMP parallelization</li>
+              <li><code>--with-scalapack=yes</code>: Enable ScaLAPACK for distributed memory</li>
+              <li><code>--with-cuda-mpi=yes</code>: Enable CUDA-aware MPI</li>
+              <li><code>FC=nvfortran</code>: NVIDIA Fortran compiler</li>
+              <li><code>MPIF90=mpif90</code>: MPI Fortran wrapper</li>
+              <li><code>CC=nvc</code>: NVIDIA C compiler</li>
+              <li><code>CXX=nvc++</code>: NVIDIA C++ compiler</li>
+            </ul>
+
+            <h5>Build QE</h5>
+            <div class="code-block">make all -j$(nproc)</div>
+            <p>This will compile all QE executables with GPU acceleration. The build may take 10–20 minutes depending on your system.</p>
+
+            <h5>Add QE Binary Path to .bashrc</h5>
+            <p>After building, add the QE <code>bin</code> directory to your PATH so the executables are accessible from anywhere:</p>
+            <div class="code-block">echo 'export PATH="/home/cuda/q-e-qe-7.3/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc</div>
+            <div style="padding: 14px 18px; background: var(--eerie-black-1); border-radius: 10px; border-left: 4px solid hsl(35, 100%, 68%); margin-bottom: 15px;">
+              <p style="margin-bottom: 0;"><b>💡 Note:</b> The path <code>/home/cuda/q-e-qe-7.3/bin</code> may vary depending on where you extracted and built QE. Adjust the path to match your QE installation directory.</p>
+            </div>
+          </div>
+
+          <!-- ====== STEP 4 ====== -->
+          <div class="step-section">
+            <h4>🚀 Step 4: Run GPU-Accelerated QE</h4>
+            <p>Once everything is set up, run your QE calculations with GPU acceleration:</p>
+            <div class="code-block">mpirun -np 2 pw.x -i scf.in > scf.out</div>
+          </div>
+
+          <!-- ====== STEP 5 ====== -->
+          <div class="step-section">
+            <h4>📊 Step 5: Monitor GPU Usage</h4>
+            <p>Keep an eye on GPU utilization and memory during your QE runs:</p>
+            <div class="code-block"># Real-time monitoring
+nvidia-smi
+
+# Watch mode (update every 1 second)
+watch -n 1 nvidia-smi</div>
+          </div>
+
+          <!-- ====== STEP 6 ====== -->
+          <div class="step-section">
+            <h4>⚡ Step 6: Performance Tips</h4>
+            <ul class="ul-disc">
+              <li>Use <code>-npool</code> to distribute k-points across GPUs</li>
+              <li>Set <code>OMP_NUM_THREADS=1</code> for MPI-only parallelization</li>
+              <li>Match <code>-np</code> to the number of GPUs for best performance</li>
+              <li>Monitor GPU utilization with <code>nvidia-smi</code> during runs</li>
+              <li>Use exclusive process mode to prevent GPU sharing conflicts</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 30px; padding: 20px 24px; background: var(--onyx); border-radius: 12px; border-left: 4px solid hsl(45, 100%, 72%);">
+            <h4 style="margin-top: 0; margin-bottom: 10px;">✅ Conclusion</h4>
+            <p style="margin-bottom: 0;">This setup provides a complete workflow for GPU-accelerated Quantum Espresso calculations. With the environment configured and QE built with GPU support, you can now leverage NVIDIA GPUs for high-performance DFT calculations.</p>
+          </div>
         </section>
       </article>
 

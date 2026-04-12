@@ -7,10 +7,8 @@ const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
 const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
 
-// sidebar toggle functionality for mobile
-if (sidebar && sidebarBtn) {
-  sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
-}
+// sidebar is always visible - no toggle needed
+// The sidebar island is always shown with all contact info visible
 
 // testimonials variables
 const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
