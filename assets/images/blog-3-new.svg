@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1a0a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#102e10;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="mn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4488ff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#2255cc;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="o" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6644;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#cc4422;stop-opacity:0.9" />
+    </linearGradient>
+    <radialGradient id="orbital" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#76b900;stop-opacity:0.6" />
+      <stop offset="70%" style="stop-color:#76b900;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#76b900;stop-opacity:0" />
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg)"/>
+  
+  <!-- Grid -->
+  <g opacity="0.1" stroke="#44aa44" stroke-width="0.5">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="500" y1="0" x2="500" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="700" y1="0" x2="700" y2="400"/>
+  </g>
+  
+  <!-- Rock-salt crystal structure MnO -->
+  <!-- Bonds -->
+  <g opacity="0.4" stroke="#88cc88" stroke-width="2">
+    <line x1="250" y1="150" x2="350" y2="150"/>
+    <line x1="350" y1="150" x2="450" y2="150"/>
+    <line x1="450" y1="150" x2="550" y2="150"/>
+    <line x1="250" y1="250" x2="350" y2="250"/>
+    <line x1="350" y1="250" x2="450" y2="250"/>
+    <line x1="450" y1="250" x2="550" y2="250"/>
+    <line x1="250" y1="150" x2="250" y2="250"/>
+    <line x1="350" y1="150" x2="350" y2="250"/>
+    <line x1="450" y1="150" x2="450" y2="250"/>
+    <line x1="550" y1="150" x2="550" y2="250"/>
+    <line x1="250" y1="150" x2="300" y2="100"/>
+    <line x1="350" y1="150" x2="400" y2="100"/>
+    <line x1="450" y1="150" x2="500" y2="100"/>
+    <line x1="250" y1="250" x2="300" y2="300"/>
+    <line x1="350" y1="250" x2="400" y2="300"/>
+    <line x1="450" y1="250" x2="500" y2="300"/>
+  </g>
+  
+  <!-- Mn atoms (blue) -->
+  <circle cx="250" cy="150" r="22" fill="url(#mn)"/>
+  <circle cx="450" cy="150" r="22" fill="url(#mn)"/>
+  <circle cx="350" cy="250" r="22" fill="url(#mn)"/>
+  <circle cx="550" cy="250" r="22" fill="url(#mn)"/>
+  
+  <!-- O atoms (orange) -->
+  <circle cx="350" cy="150" r="18" fill="url(#o)"/>
+  <circle cx="550" cy="150" r="18" fill="url(#o)"/>
+  <circle cx="250" cy="250" r="18" fill="url(#o)"/>
+  <circle cx="450" cy="250" r="18" fill="url(#o)"/>
+  
+  <!-- Atom labels -->
+  <text x="250" y="156" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white" font-weight="bold">Mn</text>
+  <text x="450" y="156" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white" font-weight="bold">Mn</text>
+  <text x="350" y="256" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white" font-weight="bold">Mn</text>
+  <text x="550" y="256" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white" font-weight="bold">Mn</text>
+  
+  <text x="350" y="156" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">O</text>
+  <text x="550" y="156" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">O</text>
+  <text x="250" y="256" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">O</text>
+  <text x="450" y="256" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">O</text>
+  
+  <!-- Wannier function orbitals -->
+  <ellipse cx="300" cy="200" rx="45" ry="35" fill="url(#orbital)" filter="url(#glow)" transform="rotate(30 300 200)"/>
+  <ellipse cx="500" cy="200" rx="45" ry="35" fill="url(#orbital)" filter="url(#glow)" transform="rotate(-30 500 200)"/>
+  <ellipse cx="400" cy="200" rx="50" ry="40" fill="url(#orbital)" filter="url(#glow)"/>
+  
+  <!-- Band structure lines (bottom right) -->
+  <g opacity="0.6" stroke="#76b900" stroke-width="1.5">
+    <polyline points="600,100 620,130 640,110 660,150 680,120 700,160 720,140 740,180" fill="none"/>
+    <polyline points="600,200 620,220 640,210 660,240 680,230 700,260 720,250 740,280" fill="none"/>
+    <polyline points="600,300 620,310 640,305 660,320 680,315 700,330 720,325 740,340" fill="none"/>
+  </g>
+  
+  <!-- High symmetry points -->
+  <text x="600" y="95" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#76b900">Γ</text>
+  <text x="640" y="105" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#76b900">X</text>
+  <text x="680" y="115" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#76b900">U</text>
+  <text x="720" y="135" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#76b900">K</text>
+  
+  <!-- Text -->
+  <text x="400" y="370" text-anchor="middle" font-family="monospace" font-size="28" fill="#76b900" font-weight="bold">MnO + Wannier90</text>
+</svg>

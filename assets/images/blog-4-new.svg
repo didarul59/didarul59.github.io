@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a102e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="spin-up" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4444;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#cc2222;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="spin-down" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4488ff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#2255cc;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg)"/>
+  
+  <!-- Grid -->
+  <g opacity="0.1" stroke="#8866cc" stroke-width="0.5">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="500" y1="0" x2="500" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="700" y1="0" x2="700" y2="400"/>
+  </g>
+  
+  <!-- Magnetic spin lattice - atoms with spin arrows -->
+  <g filter="url(#glow)">
+    <!-- Row 1 -->
+    <circle cx="150" cy="120" r="12" fill="url(#spin-up)"/>
+    <line x1="150" y1="120" x2="150" y2="95" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="150,88 145,98 155,98" fill="#ff4444"/>
+    
+    <circle cx="250" cy="120" r="12" fill="url(#spin-down)"/>
+    <line x1="250" y1="120" x2="250" y2="145" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="250,152 245,142 255,142" fill="#4488ff"/>
+    
+    <circle cx="350" cy="120" r="12" fill="url(#spin-up)"/>
+    <line x1="350" y1="120" x2="350" y2="95" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="350,88 345,98 355,98" fill="#ff4444"/>
+    
+    <circle cx="450" cy="120" r="12" fill="url(#spin-down)"/>
+    <line x1="450" y1="120" x2="450" y2="145" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="450,152 445,142 455,142" fill="#4488ff"/>
+    
+    <circle cx="550" cy="120" r="12" fill="url(#spin-up)"/>
+    <line x1="550" y1="120" x2="550" y2="95" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="550,88 545,98 555,98" fill="#ff4444"/>
+    
+    <circle cx="650" cy="120" r="12" fill="url(#spin-down)"/>
+    <line x1="650" y1="120" x2="650" y2="145" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="650,152 645,142 655,142" fill="#4488ff"/>
+    
+    <!-- Row 2 -->
+    <circle cx="200" cy="200" r="12" fill="url(#spin-down)"/>
+    <line x1="200" y1="200" x2="200" y2="225" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="200,232 195,222 205,222" fill="#4488ff"/>
+    
+    <circle cx="300" cy="200" r="12" fill="url(#spin-up)"/>
+    <line x1="300" y1="200" x2="300" y2="175" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="300,168 295,178 305,178" fill="#ff4444"/>
+    
+    <circle cx="400" cy="200" r="12" fill="url(#spin-down)"/>
+    <line x1="400" y1="200" x2="400" y2="225" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="400,232 395,222 405,222" fill="#4488ff"/>
+    
+    <circle cx="500" cy="200" r="12" fill="url(#spin-up)"/>
+    <line x1="500" y1="200" x2="500" y2="175" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="500,168 495,178 505,178" fill="#ff4444"/>
+    
+    <circle cx="600" cy="200" r="12" fill="url(#spin-down)"/>
+    <line x1="600" y1="200" x2="600" y2="225" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="600,232 595,222 605,222" fill="#4488ff"/>
+    
+    <!-- Row 3 -->
+    <circle cx="150" cy="280" r="12" fill="url(#spin-up)"/>
+    <line x1="150" y1="280" x2="150" y2="255" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="150,248 145,258 155,258" fill="#ff4444"/>
+    
+    <circle cx="250" cy="280" r="12" fill="url(#spin-down)"/>
+    <line x1="250" y1="280" x2="250" y2="305" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="250,312 245,302 255,302" fill="#4488ff"/>
+    
+    <circle cx="350" cy="280" r="12" fill="url(#spin-up)"/>
+    <line x1="350" y1="280" x2="350" y2="255" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="350,248 345,258 355,258" fill="#ff4444"/>
+    
+    <circle cx="450" cy="280" r="12" fill="url(#spin-down)"/>
+    <line x1="450" y1="280" x2="450" y2="305" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="450,312 445,302 455,302" fill="#4488ff"/>
+    
+    <circle cx="550" cy="280" r="12" fill="url(#spin-up)"/>
+    <line x1="550" y1="280" x2="550" y2="255" stroke="#ff4444" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="550,248 545,258 555,258" fill="#ff4444"/>
+    
+    <circle cx="650" cy="280" r="12" fill="url(#spin-down)"/>
+    <line x1="650" y1="280" x2="650" y2="305" stroke="#4488ff" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="650,312 645,302 655,302" fill="#4488ff"/>
+  </g>
+  
+  <!-- Exchange interaction lines -->
+  <g opacity="0.3" stroke="#8866cc" stroke-width="1" stroke-dasharray="4,4">
+    <line x1="150" y1="120" x2="250" y2="120"/>
+    <line x1="250" y1="120" x2="350" y2="120"/>
+    <line x1="350" y1="120" x2="450" y2="120"/>
+    <line x1="450" y1="120" x2="550" y2="120"/>
+    <line x1="550" y1="120" x2="650" y2="120"/>
+    <line x1="200" y1="200" x2="300" y2="200"/>
+    <line x1="300" y1="200" x2="400" y2="200"/>
+    <line x1="400" y1="200" x2="500" y2="200"/>
+    <line x1="500" y1="200" x2="600" y2="200"/>
+    <line x1="150" y1="280" x2="250" y2="280"/>
+    <line x1="250" y1="280" x2="350" y2="280"/>
+    <line x1="350" y1="280" x2="450" y2="280"/>
+    <line x1="450" y1="280" x2="550" y2="280"/>
+    <line x1="550" y1="280" x2="650" y2="280"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="400" y="360" text-anchor="middle" font-family="monospace" font-size="28" fill="#8866cc" font-weight="bold">VAMPIRE + CUDA</text>
+</svg>
