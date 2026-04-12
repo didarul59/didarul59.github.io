@@ -149,6 +149,9 @@
             <button class="navbar-link active" data-nav-link="about">About</button>
           </li>
           <li class="navbar-item">
+            <button class="navbar-link" data-nav-link="research">Research</button>
+          </li>
+          <li class="navbar-item">
             <button class="navbar-link" data-nav-link="blog">Blog</button>
           </li>
           <!-- <li class="navbar-item">
@@ -159,9 +162,16 @@
 
       <!-- About Me -->
       <article class="about active" data-page="about">
-        <header>
-          <h3 class="h3 article-title" style="color: var(--orange-yellow-crayola);">ABOUT ME</h3>
-        </header>
+        <div class="article-header-row">
+          <div class="article-top-nav">
+            <button class="article-nav-link" data-nav-link="about">About</button>
+            <button class="article-nav-link" data-nav-link="research">Research</button>
+            <button class="article-nav-link" data-nav-link="blog">Blog</button>
+          </div>
+          <header>
+            <h3 class="h3 article-title" style="color: var(--orange-yellow-crayola);">ABOUT ME</h3>
+          </header>
+        </div>
 
         <section class="about-text">
           <p><b>Hi! Welcome to My Site!</b></p>
@@ -204,11 +214,53 @@
         </section>
       </article>
 
+      <!-- Research -->
+      <article class="vlog" data-page="research">
+        <div class="article-header-row">
+          <div class="article-top-nav">
+            <button class="article-nav-link" data-nav-link="about">About</button>
+            <button class="article-nav-link" data-nav-link="research">Research</button>
+            <button class="article-nav-link" data-nav-link="blog">Blog</button>
+          </div>
+          <header>
+            <h3 class="h3 article-title" style="color: var(--orange-yellow-crayola);">RESEARCH</h3>
+          </header>
+        </div>
+
+        <!-- Publications -->
+        <section class="about-text">
+          <h4 class="h4" style="margin-bottom: 15px; color: var(--orange-yellow-crayola);">Publications</h4>
+          <ol class="research-list">
+            <li>"Explore the potential high-temperature energy conversion material Gd2MnCoO6 and study the structural, optical, and electrical properties through DFT with Hubbard correction." — <em>Under Review</em></li>
+            <li>"First-Principles Investigation of K3InI6 for Photovoltaic Applications: Structural, Electronic, Optical, Transport and Solar Cell Efficiency Analysis." — <em>Under Review</em></li>
+            <li>"Preparation and Characterization of Iron Oxide Nanoparticles via Laser Ablation Using Nd:YAG Pulsed Laser: Electronic and Nonlinear Optical Properties." — <em>Manuscript in Preparation</em></li>
+          </ol>
+        </section>
+
+        <!-- Conference Presentations -->
+        <section class="about-text" style="margin-top: 25px;">
+          <h4 class="h4" style="margin-bottom: 15px; color: var(--orange-yellow-crayola);">Conference Presentations</h4>
+          <ol class="research-list">
+            <li>"Electronic Characterization of FeO using Density Functional Theory with Hubbard Corrections." — National Conference On Physics For The 21st Century, Khulna University, May 2024. <em>(Oral Presentation)</em></li>
+            <li>"Comparative Study of ZnO Nanoparticles: Experimental Evaluation and Density Functional Theory Predictions of Electronic and Optical Properties." — ICMIME 2024, December 2024. <em>(Full Paper)</em></li>
+            <li>"First-Principles Calculations and Experimental Investigation of Copper Oxides: Analysis of Electronic Structure and Optical Properties." — 9th BCA Conference, Dhaka, January 2025. <em>(Poster Presentation)</em></li>
+            <li>"First-Principles Investigation of Structural, Electronic, and Optical Properties of ZnCr2O4 Using DFT with Hubbard Corrections." — 8th ICERIE 2025, SUST, April 2025. <em>(Full Paper)</em></li>
+          </ol>
+        </section>
+      </article>
+
       <!-- Blog -->
       <article class="vlog" data-page="blog">
-        <header>
-          <h3 class="h3 article-title" style="color: var(--orange-yellow-crayola);">BLOGS</h3>
-        </header>
+        <div class="article-header-row">
+          <div class="article-top-nav">
+            <button class="article-nav-link" data-nav-link="about">About</button>
+            <button class="article-nav-link" data-nav-link="research">Research</button>
+            <button class="article-nav-link" data-nav-link="blog">Blog</button>
+          </div>
+          <header>
+            <h3 class="h3 article-title" style="color: var(--orange-yellow-crayola);">BLOGS</h3>
+          </header>
+        </div>
 
         <section class="blog-posts">
           <ul class="blog-posts-list">

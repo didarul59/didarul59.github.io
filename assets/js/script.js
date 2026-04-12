@@ -121,31 +121,34 @@ if (form && formInputs.length > 0 && formBtn) {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+const handleNavigation = function(clickedNav) {
+  // Update pages
+  for (let j = 0; j < pages.length; j++) {
+    if (clickedNav === pages[j].dataset.page) {
+      pages[j].classList.add("active");
+      window.scrollTo(0, 0);
+    } else {
+      pages[j].classList.remove("active");
+    }
+  }
+
+  // Update all nav links (bottom + article top)
+  for (let j = 0; j < navigationLinks.length; j++) {
+    const navVal = navigationLinks[j].dataset.navLink || navigationLinks[j].innerHTML.toLowerCase().trim();
+    if (clickedNav === navVal) {
+      navigationLinks[j].classList.add("active");
+    } else {
+      navigationLinks[j].classList.remove("active");
+    }
+  }
+};
+
 // add event to all nav link
 if (navigationLinks.length > 0 && pages.length > 0) {
   for (let i = 0; i < navigationLinks.length; i++) {
     navigationLinks[i].addEventListener("click", function () {
       const clickedNav = this.dataset.navLink || this.innerHTML.toLowerCase().trim();
-      
-      // Update pages
-      for (let j = 0; j < pages.length; j++) {
-        if (clickedNav === pages[j].dataset.page) {
-          pages[j].classList.add("active");
-          window.scrollTo(0, 0);
-        } else {
-          pages[j].classList.remove("active");
-        }
-      }
-
-      // Update nav links
-      for (let j = 0; j < navigationLinks.length; j++) {
-        const navVal = navigationLinks[j].dataset.navLink || navigationLinks[j].innerHTML.toLowerCase().trim();
-        if (clickedNav === navVal) {
-          navigationLinks[j].classList.add("active");
-        } else {
-          navigationLinks[j].classList.remove("active");
-        }
-      }
+      handleNavigation(clickedNav);
     });
   }
 }
