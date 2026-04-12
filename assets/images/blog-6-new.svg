@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#101e2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="qe-color" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4488ff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#2255cc;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="dp-color" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#76b900;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#5a8c00;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="arrow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4488ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#76b900;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg)"/>
+  
+  <!-- Grid -->
+  <g opacity="0.08" stroke="#ffffff" stroke-width="0.5">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="500" y1="0" x2="500" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="700" y1="0" x2="700" y2="400"/>
+  </g>
+  
+  <!-- QE Box -->
+  <rect x="80" y="130" width="200" height="140" rx="16" fill="#1a2a3a" stroke="url(#qe-color)" stroke-width="3" filter="url(#glow)"/>
+  <text x="180" y="185" text-anchor="middle" font-family="monospace" font-size="22" fill="#4488ff" font-weight="bold">Quantum</text>
+  <text x="180" y="215" text-anchor="middle" font-family="monospace" font-size="22" fill="#4488ff" font-weight="bold">ESPRESSO</text>
+  
+  <!-- Neural Network nodes -->
+  <g opacity="0.8">
+    <!-- Hidden layer -->
+    <circle cx="530" cy="120" r="8" fill="#76b900"/>
+    <circle cx="570" cy="150" r="8" fill="#76b900"/>
+    <circle cx="530" cy="180" r="8" fill="#76b900"/>
+    <circle cx="570" cy="210" r="8" fill="#76b900"/>
+    <circle cx="530" cy="240" r="8" fill="#76b900"/>
+    <circle cx="570" cy="270" r="8" fill="#76b900"/>
+    <circle cx="530" cy="300" r="8" fill="#76b900"/>
+    
+    <!-- Output layer -->
+    <circle cx="640" cy="150" r="8" fill="#76b900"/>
+    <circle cx="640" cy="210" r="8" fill="#76b900"/>
+    <circle cx="640" cy="270" r="8" fill="#76b900"/>
+  </g>
+  
+  <!-- Neural Network connections -->
+  <g opacity="0.3" stroke="#76b900" stroke-width="1">
+    <line x1="530" y1="120" x2="640" y2="150"/>
+    <line x1="530" y1="120" x2="640" y2="210"/>
+    <line x1="530" y1="180" x2="640" y2="150"/>
+    <line x1="530" y1="180" x2="640" y2="210"/>
+    <line x1="530" y1="180" x2="640" y2="270"/>
+    <line x1="530" y1="240" x2="640" y2="210"/>
+    <line x1="530" y1="240" x2="640" y2="270"/>
+    <line x1="530" y1="300" x2="640" y2="270"/>
+    <line x1="530" y1="300" x2="640" y2="210"/>
+    <line x1="570" y1="150" x2="640" y2="150"/>
+    <line x1="570" y1="210" x2="640" y2="210"/>
+    <line x1="570" y1="270" x2="640" y2="270"/>
+  </g>
+  
+  <!-- DeePMD Box -->
+  <rect x="500" y="130" width="200" height="140" rx="16" fill="#1a2a1a" stroke="url(#dp-color)" stroke-width="3" filter="url(#glow)"/>
+  <text x="600" y="185" text-anchor="middle" font-family="monospace" font-size="22" fill="#76b900" font-weight="bold">DeePMD</text>
+  <text x="600" y="215" text-anchor="middle" font-family="monospace" font-size="22" fill="#76b900" font-weight="bold">-kit</text>
+  
+  <!-- Arrow from QE to DeePMD -->
+  <line x1="300" y1="200" x2="480" y2="200" stroke="url(#arrow)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#76b900"/>
+    </marker>
+  </defs>
+  
+  <!-- Pipeline text -->
+  <text x="390" y="190" text-anchor="middle" font-family="monospace" font-size="12" fill="#aaa" font-weight="bold">DFT → Training</text>
+  
+  <!-- Training data dots -->
+  <g opacity="0.5">
+    <circle cx="400" cy="120" r="4" fill="#4488ff"/>
+    <circle cx="380" cy="140" r="3" fill="#4488ff"/>
+    <circle cx="420" cy="160" r="4" fill="#4488ff"/>
+    <circle cx="390" cy="240" r="3" fill="#76b900"/>
+    <circle cx="410" cy="260" r="4" fill="#76b900"/>
+    <circle cx="400" cy="280" r="3" fill="#76b900"/>
+  </g>
+  
+  <!-- Bottom text -->
+  <text x="400" y="360" text-anchor="middle" font-family="monospace" font-size="28" fill="#76b900" font-weight="bold">QE → DeePMD-kit</text>
+</svg>
